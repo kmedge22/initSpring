@@ -1,23 +1,26 @@
 <!--This class needs to be wired to whatever authentication is used or whereever user data is stored-->
 <!--This is the account page from the navigation bar-->
-<div class="container pad-top">
+<div class="container pad-top"> 
     <table class="table currencytable">
         <tr>
             <td><h3>Who Am I?</h3></td>
             <td></td>
         </tr>
         <tr>
-            <td style="color:dodgerblue">User Name</td>
-            <td>AwesomeSauce</td>
-        </tr>
-        <tr>
-            <td style="color:dodgerblue">Email</td>
-            <td>smilesALot@gmail.com</td>
-        </tr>
-        <tr>
-            <td style="color:dodgerblue">Password</td>
-            <td>*****</td>
-        </tr>
-
+			<th style="color:dodgerblue">Name</th>
+			<td>{{ acc.firstName }} {{ acc.lastName }} <td>
+		</tr>
+		<tr>
+			<th style="color:dodgerblue">Role</th>
+			<td>{{ acc.role }}</td>
+		</tr>
+		<tr>
+			<th style="color:dodgerblue">Username</th>
+			<td>{{ acc.username }}</td>
+		</tr>
+		<tr>
+			<th style="color:dodgerblue">Password</th>
+			<td>{{ acc.password }}</td>
+		</tr>
     </table>
 </div>
