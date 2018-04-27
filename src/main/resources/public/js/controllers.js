@@ -57,3 +57,4 @@ angular.module('app.controllers', [])
 
 //	getAccountInfo();
 }]);
+

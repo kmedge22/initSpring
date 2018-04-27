@@ -1,6 +1,7 @@
-angular.module('app.controllers', []).controller('CurrencyListController', function($scope, $state, popupService, $window, Currency) {
-  $scope.currencys = Currency.query(); //fetch all currencys. Issues a GET to /api/vi/currencys
+angular.module('app.controllers', [])
 
+.controller('CurrencyListController', function($scope, $state, popupService, $window, Currency) {
+  $scope.currencys = Currency.query(); //fetch all currencys. Issues a GET to /api/vi/currencys
   $scope.deleteCurrency = function(currency) { // Delete a Currency. Issues a DELETE to /api/v1/currencys/:id
     if (popupService.showPopup('Really delete this?')) {
         currency.$delete(function() {
@@ -9,9 +10,13 @@ angular.module('app.controllers', []).controller('CurrencyListController', funct
       });
     }
   };
-}).controller('CurrencyViewController', function($scope, $stateParams, Currency) {
+})
+
+.controller('CurrencyViewController', function($scope, $stateParams, Currency) {
   $scope.currency = Currency.get({ id: $stateParams.id }); //Get a single currency.Issues a GET to /api/v1/currencys/:id
-}).controller('CurrencyCreateController', function($scope, $state, $stateParams, Currency) {
+})
+
+.controller('CurrencyCreateController', function($scope, $state, $stateParams, Currency) {
   $scope.currency = new Currency();  //create new currency instance. Properties will be set via ng-model on UI
 
   $scope.addCurrency = function() { //create a new currency. Issues a POST to /api/v1/currencys
@@ -19,7 +24,9 @@ angular.module('app.controllers', []).controller('CurrencyListController', funct
       $state.go('currencys'); // on success go back to the list i.e. currencys state.
     });
   };
-}).controller('CurrencyEditController', function($scope, $state, $stateParams, Currency) {
+})
+
+.controller('CurrencyEditController', function($scope, $state, $stateParams, Currency) {
   $scope.updateCurrency = function() { //Update the edited currency. Issues a PUT to /api/v1/currencys/:id
     $scope.currency.$update(function() {
       $state.go('currencys'); // on success go back to the list i.e. currencys state.
@@ -31,4 +38,22 @@ angular.module('app.controllers', []).controller('CurrencyListController', funct
   };
 
   $scope.loadCurrency(); // Load a currency which can be edited on UI
-});
+})
+
+.controller('AccountInfoController', ['$scope', 'Account', function($scope, Account) {
+	$scope.acc = Account.get();
+//	$state.lastName = "";
+
+//	function getAccountInfo() {
+//		var url = $location.path("localhost:8080/api/v1/account");
+		
+//		$http.get(url).then(function (response) {
+//			$state.firstName = response.firstName;
+//			$state.lastName = response.lastName;
+//		}, function error(response) {
+//			$scope.error = "error";
+//		});
+//	}
+
+//	getAccountInfo();
+}]);

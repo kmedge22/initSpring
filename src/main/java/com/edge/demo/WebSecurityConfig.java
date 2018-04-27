@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +17,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import com.edge.demo.bootstrap.AccountLoader;
+import com.edge.demo.controller.AccountController;
+import com.edge.demo.repository.AccountRepository;
 
 @Configuration
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	
+	static public InMemoryUserDetailsManager inMemoryUserDetailsManager;
+	private AccountRepository accountRepository;
+	private Logger log = Logger.getLogger(AccountController.class);
     /**
      * This method Determines what views a user can see while before authentication (logged in),
      * while authenticated, and can allow views to be hidden or viewed based on the user's role
@@ -32,23 +38,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/login", "/complete/registration", "/css/bootstrap.min.css","/h2/*").permitAll().anyRequest()
-                .fullyAuthenticated().and().formLogin()
-                .failureUrl("/login?error").and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
-                .exceptionHandling().accessDeniedPage("/access?error");
+
+    	http
+    		.authorizeRequests()
+    		.antMatchers("/login","/j_spring_security_check","/registration","/h2/**").permitAll().anyRequest().authenticated()
+    	.and()
+    		.formLogin()
+    		.loginPage("/login")
+    		.failureUrl("/login-error.html")
+    		.defaultSuccessUrl("/home")
+    		.permitAll()
+    	.and()
+    		.logout()
+    		.logoutSuccessUrl("/home");
+    		
+    	//        http.authorizeRequests()
+//                .antMatchers("/login", "/complete/registration", "/css/bootstrap.min.css","/h2/*","/signin/").permitAll().anyRequest()
+//                .authenticated().and().formLogin().loginPage("/login").permitAll()
+//                .failureUrl("/login?error").defaultSuccessUrl("/").and().logout()
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
+//                .exceptionHandling().accessDeniedPage("/access?error");
 //        http.authorizeRequests().antMatchers("/").permitAll().and().authorizeRequests().antMatchers("/h2/*").permitAll();
 //        
 //        
-//        http.csrf().disable();
-//        http.headers().frameOptions().disable();
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(inMemoryUserDetailsManager()).passwordEncoder(passwordEncoder());
+    	WebSecurityConfig.inMemoryUserDetailsManager = this.inMemoryUserDetailsManagerInit();
+        auth.userDetailsService(WebSecurityConfig.inMemoryUserDetailsManager).passwordEncoder(passwordEncoder());
+        
+        AccountLoader accountLoader = new AccountLoader();
+        accountLoader.setUserRepository(accountRepository);
+        accountLoader.onApplicationEvent();
     }
 
     /**
@@ -60,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+    public InMemoryUserDetailsManager inMemoryUserDetailsManagerInit() {
         
     	final Properties users = new Properties();
     	/**
@@ -76,7 +101,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     	
     	//A query statement to receive data from the sqlite db.
     	PreparedStatement ps = null;
-    	String query = "select * from user";
+    	String query = "select * from account";
     	try {
     		ps = connection.prepareStatement(query);
     		ResultSet result = ps.executeQuery();
@@ -88,6 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     			String password = passwordEncoder().encode(result.getString("password"));
     			String role = result.getString("role");
     			users.put(username,password+",ROLE_"+role+",enabled");
+    			log.info("Placed into memory");
     		}
     		
     	} catch (Exception e) {

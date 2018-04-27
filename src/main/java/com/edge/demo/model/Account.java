@@ -15,20 +15,18 @@ import javax.persistence.Table;
 @Table (name="account")
 public class Account {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Integer id;
-	private String first_name;
-	private String last_name;
+	@Id @GeneratedValue(strategy = GenerationType.AUTO) Integer id;
+	private String firstName;
+	private String lastName;
 	private String username;
 	private String password;
 	private String role;
 	
 	public Account() { }
 	
-	public Account(String first_name, String last_name, String username, String password, String role) {
-		this.first_name = first_name;
-		this.last_name = last_name;
+	public Account(String firstName, String lastName, String username, String password, String role) {
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.username = username;
 		this.password = password;
 		this.role = role;
@@ -43,19 +41,19 @@ public class Account {
 	}
 	
 	public String getFirstName() {
-		return this.first_name;
+		return this.firstName;
 	}
 	
-	public void setFirstName(String first_name) {
-		this.first_name = first_name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 	
 	public String getLastName() {
-		return this.last_name;
+		return this.lastName;
 	}
 	
-	public void setLastName(String last_name) {
-		this.last_name = last_name;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	
 	public String getPassword() {
@@ -82,4 +80,8 @@ public class Account {
 		this.role = role;
 	}
 
+	@Override
+	public String toString() {
+		return this.id+": "+this.lastName+", "+this.firstName+"\t"+this.username+"\t"+this.password+"\t"+this.role;
+	}
 }
