@@ -18,9 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import com.edge.demo.bootstrap.AccountLoader;
 import com.edge.demo.controller.AccountController;
-import com.edge.demo.repository.AccountRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +26,7 @@ import com.edge.demo.repository.AccountRepository;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	static public InMemoryUserDetailsManager inMemoryUserDetailsManager;
-	private AccountRepository accountRepository;
+//	private AccountRepository accountRepository;
 	private Logger log = Logger.getLogger(AccountController.class);
     /**
      * This method Determines what views a user can see while before authentication (logged in),
@@ -68,12 +66,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+
     	WebSecurityConfig.inMemoryUserDetailsManager = this.inMemoryUserDetailsManagerInit();
         auth.userDetailsService(WebSecurityConfig.inMemoryUserDetailsManager).passwordEncoder(passwordEncoder());
-        
-        AccountLoader accountLoader = new AccountLoader();
-        accountLoader.setUserRepository(accountRepository);
-        accountLoader.onApplicationEvent();
+
     }
 
     /**

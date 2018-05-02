@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.edge.demo.SqlConnect;
@@ -15,11 +17,11 @@ import com.edge.demo.repository.AccountRepository;
 
 /**
  * Not sure this class does anything. May need to remove.
- * @author mjonir
+ * @author Sam
  *
  */
 @Component
-public class AccountLoader {
+public class AccountLoader implements ApplicationRunner{
 
 	private AccountRepository accountRepository;
 	
@@ -34,7 +36,7 @@ public class AccountLoader {
 	 * Adds data from non-volatile database to h2 memory db.
 	 */
 	
-	public void onApplicationEvent() {
+	public void run(ApplicationArguments args) {
     	
     	//Connects to the sqlite DB.
     	Connection connection = SqlConnect.connector();
